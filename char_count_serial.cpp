@@ -1,6 +1,23 @@
 
 #include <iostream>
+#include <fstream>
+#include <string>
+#include <cstring>
+#include <chrono>
 
+
+void print_memory_usage() {
+    std::ifstream status_file("/proc/self/status");
+    std::string line;
+    while (std::getline(status_file, line)) {
+        if (line.find("VmRSS:") == 0) { // RAM utilizada
+            std::cout << "Memoria RAM del proceso / " << line << std::endl;
+        }
+        if (line.find("VmSize:") == 0) { 
+            std::cout << "Memoria virtual del proceso / " << line << std::endl;
+        }
+    }
+}
 
 int char_count_serial(const char* str, char char_x, size_t M) {
     if (str == nullptr) {
@@ -8,7 +25,7 @@ int char_count_serial(const char* str, char char_x, size_t M) {
     }
 
     int count = 0;
-    int i;
+    int i = 0;
     while (*str != '\0' && i < M) {
         if (*str == char_x) {
             count++;
@@ -19,22 +36,32 @@ int char_count_serial(const char* str, char char_x, size_t M) {
     return count;
 }
 
+// Compilar con g++
+// Ejecutar con perf: perf stat ./char_count_serial
 
-
-int main() {
-    const char text[] = "texttotexttotto";
-
+int main() {    
+    print_memory_usage();
     int times = 0;
-    size_t text_length = sizeof(text) / sizeof(text[0]) - 1; 
-    //size_t text_length = 8;   // Tamano de ejemplo
+    const char *text = "texttooooooogjho";
+    size_t text_length = strlen(text); 
 
     try {
+        auto start = std::chrono::high_resolution_clock::now();
+        
         times = char_count_serial(text, 'o', text_length);
+        
+        auto end = std::chrono::high_resolution_clock::now();
+        auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
+    
         std::cout << "Character 'o' appears " << times << " times in the string." << std::endl;
+        std::cout << "Execution time: " << elapsed.count() << " nanoseconds." << std::endl;
     } catch (const std::invalid_argument& e) {
         std::cerr << "Error: " << e.what() << std::endl;
         return EXIT_FAILURE;
     }
-    
+
+    print_memory_usage();
+     
 }
+
 
