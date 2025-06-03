@@ -42,25 +42,26 @@ int char_count_serial(const char* str, char char_x, size_t M) {
 int main() {    
     print_memory_usage();
     int times = 0;
-    const char *text = "texttooooooogjho";
-    size_t text_length = strlen(text); 
+    const char *str = "this is a text for testing the character count with SIMD or Serial methods. And we will compare those methods.";
+    char char_x = 't'; // Character to count
+    size_t text_length = strlen(str); 
 
     try {
         auto start = std::chrono::high_resolution_clock::now();
         
-        times = char_count_serial(text, 'o', text_length);
+        times = char_count_serial(str, char_x, text_length);
         
         auto end = std::chrono::high_resolution_clock::now();
         auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
     
-        std::cout << "Character 'o' appears " << times << " times in the string." << std::endl;
+        std::cout << "Character '" << char_x << "' appears " << times << " times in the string." << std::endl;
         std::cout << "Execution time: " << elapsed.count() << " nanoseconds." << std::endl;
     } catch (const std::invalid_argument& e) {
         std::cerr << "Error: " << e.what() << std::endl;
         return EXIT_FAILURE;
     }
 
-    print_memory_usage();
+    print_memory_usage(); 
      
 }
 

@@ -1,6 +1,7 @@
 
 #include <immintrin.h>
 #include <iostream>
+#include <cstring>
 
 int count_ocurrences(const char* str, int m, char char_x) {
     int count = 0;
@@ -35,12 +36,13 @@ int count_ocurrences(const char* str, int m, char char_x) {
 
 }
 
-int main() {
-    // Probar la función con un ejemplo
-    const char* str = "Hello, this is a test string with some characters.";
-    int m = 50; // Length of the string to consider
+// Compile with: g++ -o char_count_simd char_count_simd.cpp -mavx
 
-    char char_x = '.';
+int main() {
+    // Example usage
+    const char* str = "this is a text for testing the character count with SIMD or Serial methods. And we will compare those methods.";
+    size_t m = strlen(str); 
+    char char_x = 't';
     int count = count_ocurrences(str, m, char_x);
     std::cout << "Occurrences of '" << char_x << "': " << count << std::endl;
 }
