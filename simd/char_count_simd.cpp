@@ -1,9 +1,7 @@
-
+#include "../char_count.hpp"
 #include <immintrin.h>
-#include <iostream>
-#include <cstring>
 
-int count_ocurrences(const char* str, int m, char char_x) {
+int char_count_simd(const char* str, char char_x, int M) {
     int count = 0;
 
     // Replicate char_x into an AVX register
@@ -11,7 +9,7 @@ int count_ocurrences(const char* str, int m, char char_x) {
 
     // First: Count ocurrences with SIMD for efficiency
     int i = 0;
-    int simd_end = m - (m % 16);
+    int simd_end = M - (M % 16);
 
     for (; i < simd_end; i += 16) {
         // Load str into an AVX register (unaligned)
@@ -29,21 +27,9 @@ int count_ocurrences(const char* str, int m, char char_x) {
     }
 
     // Second: Count ocurrences serially for security
-    for (; i < m; i++) {
+    for (; i < M; i++) {
         if (str[i] == char_x) count++;
     }
     return count;
 
 }
-
-// Compile with: g++ -o char_count_simd char_count_simd.cpp -mavx
-
-int main() {
-    // Example usage
-    const char* str = "this is a text for testing the character count with SIMD or Serial methods. And we will compare those methods.";
-    size_t m = strlen(str); 
-    char char_x = 't';
-    int count = count_ocurrences(str, m, char_x);
-    std::cout << "Occurrences of '" << char_x << "': " << count << std::endl;
-}
-
